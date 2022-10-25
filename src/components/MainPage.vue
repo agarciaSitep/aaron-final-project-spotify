@@ -4,16 +4,19 @@
 
       <div class="searcher-cont">
         <div class="form-floating">
-          <input placeholder="¿Qué te apetece escuchar?" :value="cerca" class="cerca form-control" maxlength="800"
-            autocorrect="off" autocapitalize="off" spellcheck="false" id="cercaInput" />
+          <input placeholder="¿Qué te apetece escuchar?" v-model="cerca" v-on:keyup.enter="onSearch"
+            class="cerca form-control" maxlength="800" autocorrect="off" autocapitalize="off" spellcheck="false"
+            id="cercaInput" />
           <label for="cercaInput" class="cerca-placeholder">¿Qué te apetece escuchar?</label>
         </div>
 
 
-        <label for="selectSearchType" class="label-select-type" >Quiero buscar</label>
-        <select class="form-select tipus-cerca " id="selectSearchType" v-model="searchType" v-on:change="onChangeSelectSearchType($event)">
+        <label for="selectSearchType" class="label-select-type">Quiero buscar</label>
+        <select class="form-select tipus-cerca " id="selectSearchType" v-model="searchType"
+          v-on:change="onChangeSelectSearchType($event)">
           <option value="artist">un artista</option>
-          <option value="song">una canción</option>
+          <option value="track">una canción</option>
+          <option value="album">un album</option>
         </select>
       </div>
 
@@ -22,12 +25,51 @@
 </template>
   
 <script setup>
- import { onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import * as config from '../config';
+import { getSpotifyToken } from './utils'
 
- const searchType = ref('song');
+const searchType = ref('track');
+const cerca = ref('');
 
 function onChangeSelectSearchType(event) {
   searchType.value = event.target.value;
+}
+
+async function onSearch() {
+  //creamos la url
+  let url = config.spotify_base_url + config.spotify_search;
+  //añadimos el texto de la búsqueda
+  url += '?q=' + cerca.value;
+  //añadimos el tipo de búsqueda
+  url += '&type=' + searchType.value + '&limit=20';
+
+  //obtenemos un token de acceso
+  let token = await getSpotifyToken();
+
+  if (token !== null) {
+    let header = new Headers({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + token,
+
+    });
+
+    let initRequest = {
+      method: 'GET',
+      headers: header,
+    }
+
+    fetch(url, initRequest)
+      .then(function (response) {
+        console.log(response.json());
+      })
+      .catch(error => console.error('Error:', error))
+  } else {
+    console.error('Error: ', 'no se ha podido obtener el token de acceso.');
+  }
+
+
 }
 </script>
   
@@ -69,7 +111,7 @@ function onChangeSelectSearchType(event) {
   text-decoration: underline;
 }
 
-.tipus-cerca > option {
+.tipus-cerca>option {
   color: #000;
 }
 
@@ -105,6 +147,9 @@ function onChangeSelectSearchType(event) {
   min-width: 200px;
   width: 364px;
   text-align: center;
+  background: url('../icons/search.png') no-repeat scroll 17px 10px;
+  background-color: #fff;
+  padding-left: 30px;
 }
 
 .searcher-cont {
@@ -121,10 +166,9 @@ function onChangeSelectSearchType(event) {
   width: fit-content;
 }
 
-form-group > .form-control-input-lg
-{
+form-group>.form-control-input-lg {
   background: url(images/example.gif) no-repeat scroll 0px 0px;
-  padding-left:0px;
+  padding-left: 0px;
 }
 
 select {
