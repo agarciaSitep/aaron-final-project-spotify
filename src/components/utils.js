@@ -11,6 +11,7 @@ export async function getSpotifyToken() {
       (config.client_id + ":" + config.client_secret).toString("base64")
   );
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.setRequestHeader("grant_type", "client_credentials");
 
   xhr.onload = async () => {console.log(xhr.responseText); return xhr.responseText.json()};
   xhr.send({
