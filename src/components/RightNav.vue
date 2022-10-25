@@ -8,7 +8,7 @@
     <div class="separator"></div>
     <div class="publicidad">
       <img src='../icons/newsong.png' alt="publicidad" class="publicidad-img"/>
-      <img src='../icons/Ve y escucha lo último de djnvikk.png' alt="publicidad" class="publicidad-img"/>
+      <img src='../icons/djnvikk.png' alt="publicidad" class="publicidad-img"/>
     </div>
   </div>
 </template>
