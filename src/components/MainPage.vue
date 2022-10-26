@@ -20,6 +20,9 @@
         </select>
       </div>
 
+      <ul>
+        <li v-for="item in cercaList">{{item.name}} + ' - ' + {{item.artists[0].name}}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -27,10 +30,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import * as config from '../config';
-import { getSpotifyToken } from './utils'
+import { authorize } from './utils'
 
 const searchType = ref('track');
 const cerca = ref('');
+let cercaList = ref(new Array());
 
 function onChangeSelectSearchType(event) {
   searchType.value = event.target.value;
@@ -45,7 +49,7 @@ async function onSearch() {
   url += '&type=' + searchType.value + '&limit=20';
 
   //obtenemos un token de acceso
-  let token = await getSpotifyToken();
+  let token = await authorize();
 
   if (token !== null) {
     let header = new Headers({
@@ -60,9 +64,12 @@ async function onSearch() {
       headers: header,
     }
 
-    fetch(url, initRequest)
+    await fetch(url, initRequest)
       .then(function (response) {
-        console.log(response.json());
+        return response.json();
+        
+      }).then(respJSON => {
+        cercaList.value = respJSON.tracks.items;
       })
       .catch(error => console.error('Error:', error))
   } else {
