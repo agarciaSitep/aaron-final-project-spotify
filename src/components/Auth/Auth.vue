@@ -60,7 +60,16 @@ onMounted(async () => {
 
 async function signUp() {
   console.log(email.value + '   ' + pw.value)
-  await userStore.signUp(email.value, pw.value)
+  let resp = await userStore.signUp(email.value, pw.value)
+  if (resp !== 'ok') {
+    console.log(resp);
+    errModal.value = true;
+    errMsg.value = resp;
+    errBackground.value = '50%'
+  } else {
+    errModal.value = false;
+    errMsg.value = '';
+  }
 }
 
 async function onCloseErrModal() {

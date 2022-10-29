@@ -4,9 +4,6 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import { useUserStore } from './stores/user'
-
 import './assets/main.css'
 
 import "bootstrap/dist/css/bootstrap.min.css"

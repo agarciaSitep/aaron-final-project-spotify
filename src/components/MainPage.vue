@@ -89,7 +89,7 @@
                 <lable class="track-duration" title="duración de la canción"
                   >{{ trackDuration(item.duration_ms) }}
                 </lable>
-                <button class="add-btn" title="añadir a playlist">
+                <button class="add-btn" title="añadir a playlist" v-on:click="addSong(index)">
                   <svg
                     width="24"
                     height="24"
@@ -139,11 +139,39 @@
 import { onMounted, ref } from 'vue'
 import * as config from '../config'
 import { authorize } from './utils'
+import { useSongStore } from '../stores/song';
 
 const searchType = ref('track')
 const cerca = ref('')
 let cercaList = ref(new Array())
 const songPlayed = ref(0)
+const songStore = useSongStore();
+
+async function addSong(index) {
+  let song = cercaList.value[index];
+  let songObj = {
+    name: song.name,
+    picture: song.album.images[2].url,
+    url: song.uri,
+  }
+
+  let res = await songStore.saveSong(songObj);
+  if (typeof res === 'string' && res.includes('Error')) {
+    console.log(res);
+  } else {
+    console.log(res);
+    await getSong(song.uri);
+  }
+}
+
+async function getSong(url) {
+  let res = await songStore.getSongByUrl(url);
+  if (typeof res === 'string' && res.includes('Error')) {
+    console.log(res);
+  } else {
+    console.log(res);
+  }
+}
 
 function onChangeSelectSearchType (event) {
   searchType.value = event.target.value
