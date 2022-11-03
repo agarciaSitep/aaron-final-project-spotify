@@ -9,7 +9,7 @@ export const useUserStore = defineStore("user", {
 
   actions: {
     async fetchUser() {
-      const user = await supabase.auth.user();
+      const user = supabase.auth.user();
       this.user = user;
     },
     async signUp(email, password) {
@@ -28,6 +28,12 @@ export const useUserStore = defineStore("user", {
       if (error) return error.message;
       if (user) {this.user = user; return 'ok'}
     },
+    async signOut() {
+      const { error } = await supabase.auth.signOut();
+      if (error) return error.message;
+      this.user = null;
+      return 'ok';
+    }
   },
 
   persist: {

@@ -2,7 +2,7 @@
   <div id="right-nav">
     <div class="cont">
       <div class="btns-cont">
-        <button class="log-out-btn " type="button">Log Out</button>
+        <button class="log-out-btn" v-on:click="signOut()">Sign Out</button>
       </div>
     </div>
     <div class="separator"></div>
@@ -14,7 +14,18 @@
 </template>
   
 <script setup>
+import { useUserStore } from '../stores/user';
 
+const userStore = useUserStore();
+
+async function signOut() {
+  let resp = await userStore.signOut();
+  if (resp !== 'ok') {
+    console.log("Error: " + resp);
+  } else {
+    this.$forceUpdate();
+  }
+}
 </script>
   
 <style scoped>
@@ -61,6 +72,11 @@
   height: 40px;
   padding: 6px 48px;
   cursor: pointer
+}
+
+.log-out-btn:active {
+  position: relative;
+  top: 1px;
 }
 
 .publicidad {

@@ -1,13 +1,11 @@
 <template>
-  <div id="app">
-    <div v-if="user !== undefined && user !== null && user">
-      <BottomNav></BottomNav>
-      <LeftNav></LeftNav>
-      <RightNav></RightNav>
-      <MainPage></MainPage>
-    </div>
-    <Auth v-else />
+  <div v-if="user !== undefined && user !== null && user">
+    <BottomNav></BottomNav>
+    <LeftNav></LeftNav>
+    <RightNav></RightNav>
+    <MainPage></MainPage>
   </div>
+  <Auth v-else />
 </template>
 
 <script setup>
@@ -34,8 +32,8 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-#app  {
+<style>
+#main  {
   width: 100vw;
   height: 100vh;
   font-family: var(--font-family, CircularSp, CircularSp-Arab, CircularSp-Hebr, CircularSp-Cyrl, CircularSp-Grek, CircularSp-Deva, var(--fallback-fonts, sans-serif));
