@@ -16,7 +16,7 @@
             <label class="sign-up" v-on:click="onChangeSing('up')">SIGN UP</label>
           </div>
           <input class="input input-btn" type="email" v-model="email" placeholder="Username" />
-          <input class="input input-btn" type="password" v-model="pw" placeholder="Password" />
+          <input class="input input-btn" type="password" v-model="pw" placeholder="Password" v-on:keyup.enter="onClickAction()"/>
           <button v-on:click="onClickAction()" class="action-btn">
             {{ action }}
           </button>

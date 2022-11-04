@@ -18,6 +18,7 @@ export const usePlaylistStore = defineStore("playlist", {
         }
 
         this.playlist = songs;
+        return songs;
     },
     async addSongToPlaylist(playlist) {
         const { data, error } = await supabase.from('playlist').insert(playlist).single();

@@ -35,7 +35,14 @@ export const useSongStore = defineStore("song", {
         
         return data;
     },
-    
+    async getSongById(id) {
+      const { data, error } = await supabase.from('song').select('*').eq('id', id).single();
+        if (error) {
+            return 'Error: ' + error.message;
+        }
+        
+        return data;
+    }
   },
 
   persist: {
