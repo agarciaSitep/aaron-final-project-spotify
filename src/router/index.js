@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import App from '../App.vue';
-import playlist from '../components/playlist.vue';
+import Playlist from '../components/Playlist.vue';
 import Auth from '../components/Auth/Auth.vue';
 
 const router = createRouter({
-  history: createWebHistory('/'),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -14,7 +14,7 @@ const router = createRouter({
     {
       path: '/playlist',
       name: 'playlist',
-      component: playlist
+      component: Playlist
     },
     {
       path: '/login',
@@ -24,8 +24,6 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  next();
-});
+
 
 export default router

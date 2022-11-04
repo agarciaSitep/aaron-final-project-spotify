@@ -12,12 +12,14 @@ export const usePlaylistStore = defineStore("playlist", {
         const { data: songs, error } = await supabase.from('playlist').select('*').eq('user_id', user_id);
         if (error) {
             return 'Error: ' + error.message;
-        }
-        if (songs === null) {
+        } else {
+          if (songs === null) {
             this.playlist = [];
-        }
+          }
 
-        this.playlist = songs;
+          this.playlist = songs;
+        }
+        
         return songs;
     },
     async addSongToPlaylist(playlist) {
@@ -28,8 +30,8 @@ export const usePlaylistStore = defineStore("playlist", {
         
         return data;
     },
-    async deleteSongFromPlaylist(user_id, song_id) {
-        const { data, error } = await supabase.from('song').delete('*').eq('user_id', user_id).eq('song_id', song_id);
+    async deleteSongFromPlaylist(id) {
+        const { data, error } = await supabase.from('playlist').delete('*').eq('id', id);
         if (error) {
             return 'Error: ' + error.message;
         }

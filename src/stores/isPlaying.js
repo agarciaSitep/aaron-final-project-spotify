@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 export const useIsPlayingStore = defineStore("isPlaying", {
   state: () => ({
-    isPlaying: '59nOXPmaKlBfGMDeOVGrIK',
+    isPlaying: null,
   }),
 
   actions: {

@@ -12,12 +12,14 @@ export const useSongStore = defineStore("song", {
         const { data: songs, error } = await supabase.from('song').select('*').order('id');
         if (error) {
             return 'Error: ' + error.message;
-        }
-        if (songs === null) {
+        } else {
+          if (songs === null) {
             this.song = [];
-        }
+          }
 
-        this.song = songs;
+          this.song = songs;
+        }
+        
     },
     async saveSong(song) {
         const { data, error } = await supabase.from('song').insert(song).single();
