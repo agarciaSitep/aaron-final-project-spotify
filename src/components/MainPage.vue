@@ -23,7 +23,7 @@
         <li v-for="(item, index) in cercaList">
           <div role="row" class="result-item">
             <div class="play-pic-name-container">
-              <div class="play-container" v-on:click="playSong(item)">
+              <div class="play-container" v-on:click="playSong(item, index)">
                 <div class="track-playing" v-if="songPlayed === index">
                   <img class="n5XwsUqagSoVk8oMiw1x" width="14" height="14" alt=""
                     src="https://open.spotifycdn.com/cdn/images/equaliser-animated-green.f93a2ef4.gif" />
@@ -84,7 +84,7 @@
           <button class="close-btn" v-on:click="closeAddSongAnyways()">No añadir</button>
         </div>
       </div>
-    
+
     </div>
   </div>
 </template>
@@ -98,48 +98,78 @@ import { useIsPlayingStore } from '../stores/isPlaying';
 import { usePlaylistStore } from '../stores/user_songs';
 import { useUserStore } from '../stores/user';
 import { storeToRefs } from 'pinia';
+import { usePlaylistFeatures } from '../stores/playlist_features';
 
 const searchType = ref('track')
 const cerca = ref('')
 let cercaList = ref(new Array())
-const songPlayed = ref(0)
+const songPlayed = ref(9999)
 const songStore = useSongStore();
 const playlistStore = usePlaylistStore();
 const isPlayingStore = useIsPlayingStore();
 const songAlreadyAdded = ref({ added: false, songObj: {} });
+const playlistFeaturesStore = usePlaylistFeatures();
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+const { features } = storeToRefs(playlistFeaturesStore);
 
 async function addSong(index) {
   let song = cercaList.value[index];
-  let songObj = {
-    name: song.name,
-    picture: song.album.images[2].url,
-    url: song.uri,
-  }
-  let isSongAlreadyAdded = await songStore.getSongByUrl(songObj.url);
+  
+  let isSongAlreadyAdded = await songStore.getSongByUrl(song.uri);
   //miramos si la canción ya está añadida
   if (typeof isSongAlreadyAdded === 'string' && isSongAlreadyAdded.includes('Error:')) {
     //si la canción no está añadida la añadimos
+    let artists = '';
+    for (let i = 0; i < song.artists.length; ++i) {
+      if (i > 0) artists += '::';
+      artists += song.artists[i].name;
+    }
+
+    let songObj = {
+      name: song.name,
+      picture: song.album.images[2].url,
+      url: song.uri,
+      duration: song.duration_ms,
+      album: song.album.name,
+      artists: artists
+    }
+
     let storedSong = await songStore.saveSong(songObj);
     if (typeof storedSong === 'string' && storedSong.includes('Error')) {
       console.log(storedSong);
     } else {
       //si ha salido bien el añadido, la añadimos a la playlist del usuario
+      let obj = {
+        added: false,
+        songObj: {}
+      }
+      songAlreadyAdded.value = obj;
+
       console.log(storedSong);
       let playlist = {
         user_id: user.value.id,
         song_id: storedSong.id
       }
-      await playlistStore.addSongToPlaylist(playlist);
+      let resp = await playlistStore.addSongToPlaylist(playlist);
+      if (typeof resp === 'string' && resp.includes('Error:')) {
+        console.log(resp);
+      } else {
+        if (features.value === null) await playlistFeaturesStore.createPlaylist(user.value.id);
+      }
     }
   } else {
     //si la canción está añadida, miramos si ya está en la playlist del usuario
     let playlistSong = await playlistStore.checkSongIsAlreadyAdded(user.value.id, isSongAlreadyAdded.id);
     if (typeof playlistSong === 'string' && playlistSong.includes('Error:')) {
       //si no está en la playlist del usuario la añadimos
-      console.log(isSongAlreadyAdded);
+      let obj = {
+        added: false,
+        songObj: {}
+      }
+      songAlreadyAdded.value = obj;
+
       let playlist = {
         user_id: user.value.id,
         song_id: isSongAlreadyAdded.id
@@ -147,11 +177,16 @@ async function addSong(index) {
       let resp = await playlistStore.addSongToPlaylist(playlist);
       if (typeof resp === 'string' && resp.includes('Error:')) {
         console.log(resp);
+      } else {
+        if (features.value === null) await playlistFeaturesStore.createPlaylist(user.value.id);
       }
     } else {
       //si está en la playlist del usuario le preguntamos si la quiere volver a añadir
-      songAlreadyAdded.value.added = true;
-      songAlreadyAdded.value.songObj = playlistSong;
+      let obj = {
+        added: true,
+        songObj: playlistSong
+      }
+      songAlreadyAdded.value = obj;
     }
 
   }
@@ -159,17 +194,27 @@ async function addSong(index) {
 }
 
 async function addSongAnyways() {
-  let playlist = {
-    user_id: user.value.id,
-    song_id: songAlreadyAdded.value.songObj[0].song_id
-  }
-  await playlistStore.addSongToPlaylist(playlist);
+  if (songAlreadyAdded.value.added && typeof songAlreadyAdded.value.songObj[0] !== 'undefined') {
+    let playlist = {
+      user_id: user.value.id,
+      song_id: songAlreadyAdded.value.songObj[0].song_id
+    }
+    let resp = await playlistStore.addSongToPlaylist(playlist);
+    if (typeof resp === 'string' && resp.includes('Error:')) {
+      console.log(resp);
+    } else {
+      if (features.value === null) await playlistFeaturesStore.createPlaylist(user.value.id);
+    }
+  } 
   closeAddSongAnyways();
 }
 
 async function closeAddSongAnyways() {
-  songAlreadyAdded.value.added = false;
-  songAlreadyAdded.value.songObj = null;
+  let obj = {
+    added: false,
+    songObj: {}
+  }
+  songAlreadyAdded.value = obj;
 }
 
 async function getSong(url) {
@@ -228,9 +273,10 @@ async function onSearch() {
   }
 }
 
-async function playSong(song) {
+async function playSong(song, index) {
   let url = song.uri.split(':')[2];
-  isPlayingStore.playSong(url);
+  await isPlayingStore.playSong(url);
+  songPlayed.value = index;
 }
 </script>
 
