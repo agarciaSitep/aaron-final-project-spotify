@@ -230,7 +230,7 @@ async function deleteSong(index) {
 }
 
 .picture {
-  width: 80%;
+  width: 100%;
   height: 100%;
 }
 
