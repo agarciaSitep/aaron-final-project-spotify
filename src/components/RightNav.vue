@@ -7,8 +7,8 @@
     </div>
     <div class="separator"></div>
     <div class="publicidad">
-      <img src='../icons/newsong.png' alt="publicidad" class="publicidad-img"/>
-      <img src='../icons/djnvikk.png' alt="publicidad" class="publicidad-img"/>
+      <img src='../icons/newsong.png' alt="publicidad" class="publicidad-img" />
+      <img src='../icons/djnvikk.png' alt="publicidad" class="publicidad-img" />
     </div>
   </div>
 </template>
@@ -94,6 +94,12 @@ async function signOut() {
 .publicidad-img {
   width: 280px;
   height: 49%;
+}
+
+@media screen and (max-width: 464px) {
+  #right-nav {
+    display: none;
+  }
 }
 </style>
   

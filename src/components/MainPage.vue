@@ -1,6 +1,13 @@
+
 <template>
   <div id="main-comp">
     <div class="cont">
+      <button class="menu-btn" v-on:click="openMenu()">
+        <svg fill="#FFFFFF" viewBox="0 0 72 72" width="34px" height="34px">
+          <path
+            d="M56 48c2.209 0 4 1.791 4 4 0 2.209-1.791 4-4 4-1.202 0-38.798 0-40 0-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4C17.202 48 54.798 48 56 48zM56 32c2.209 0 4 1.791 4 4 0 2.209-1.791 4-4 4-1.202 0-38.798 0-40 0-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4C17.202 32 54.798 32 56 32zM56 16c2.209 0 4 1.791 4 4 0 2.209-1.791 4-4 4-1.202 0-38.798 0-40 0-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4C17.202 16 54.798 16 56 16z" />
+        </svg>
+      </button>
       <div class="searcher-cont">
         <div class="form-floating">
           <input placeholder="¿Qué te apetece escuchar?" v-model="cerca" v-on:keyup.enter="onSearch"
@@ -39,6 +46,7 @@
                 <label>{{ item.name }}</label>
                 <div class="artist">
                   <label v-for="(artist, i) in item.artists">
+
                     <label v-if="i > 0"> ,</label>
                     {{ artist.name }}
                   </label>
@@ -109,6 +117,7 @@ const playlistStore = usePlaylistStore();
 const isPlayingStore = useIsPlayingStore();
 const songAlreadyAdded = ref({ added: false, songObj: {} });
 const playlistFeaturesStore = usePlaylistFeatures();
+const innerWidth = ref(window.innerWidth);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -116,7 +125,7 @@ const { features } = storeToRefs(playlistFeaturesStore);
 
 async function addSong(index) {
   let song = cercaList.value[index];
-  
+
   let isSongAlreadyAdded = await songStore.getSongByUrl(song.uri);
   //miramos si la canción ya está añadida
   if (typeof isSongAlreadyAdded === 'string' && isSongAlreadyAdded.includes('Error:')) {
@@ -193,6 +202,13 @@ async function addSong(index) {
 
 }
 
+async function openMenu() {
+  if (window.innerWidth < 464) {
+    //document.getElementById('left-nav').style.display = 'none';
+    document.getElementById('left-nav').style.display = 'block';
+  }
+}
+
 async function addSongAnyways() {
   if (songAlreadyAdded.value.added && typeof songAlreadyAdded.value.songObj[0] !== 'undefined') {
     let playlist = {
@@ -205,7 +221,7 @@ async function addSongAnyways() {
     } else {
       if (features.value === null) await playlistFeaturesStore.createPlaylist(user.value.id);
     }
-  } 
+  }
   closeAddSongAnyways();
 }
 
@@ -290,6 +306,10 @@ async function playSong(song, index) {
   left: 300px;
 }
 
+.menu-btn {
+    display: none;
+  }
+
 .cont {
   display: grid;
 
@@ -329,14 +349,6 @@ async function playSong(song, index) {
   text-align: center;
   font-size: 1rem;
   font-weight: 400;
-  font-family: var(--font-family,
-      CircularSp,
-      CircularSp-Arab,
-      CircularSp-Hebr,
-      CircularSp-Cyrl,
-      CircularSp-Grek,
-      CircularSp-Deva,
-      var(--fallback-fonts, sans-serif));
   text-overflow: ellipsis;
   color: #000;
   transform-origin: -150px 0;
@@ -348,14 +360,6 @@ async function playSong(song, index) {
   margin-block: 0px;
   font-size: 1rem;
   font-weight: 400;
-  font-family: var(--font-family,
-      CircularSp,
-      CircularSp-Arab,
-      CircularSp-Hebr,
-      CircularSp-Cyrl,
-      CircularSp-Grek,
-      CircularSp-Deva,
-      var(--fallback-fonts, sans-serif));
   color: inherit;
   border: 0;
   border-radius: 500px;
@@ -579,5 +583,136 @@ input {
 .close-btn:active {
   position: relative;
   top: 1px;
+}
+
+@media screen and (max-width: 464px) {
+  #main-comp {
+    width: 100vw;
+    height: calc(100vh - 80px);
+    background-color: #121212;
+    position: fixed;
+    bottom: 80px;
+    left: 0;
+  }
+
+  .cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .searcher-cont {
+    display: flex;
+    align-items: center;
+    padding-left: 0px;
+    justify-content: center;
+  }
+
+  .cerca {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    margin-block: 0px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: inherit;
+    border: 0;
+    border-radius: 500px;
+    color: #000;
+    height: 45px !important;
+    padding: 20px 48px;
+    text-overflow: ellipsis;
+    min-width: 200px;
+    width: 300px;
+    text-align: center;
+    background: none;
+    background-color: #fff;
+    padding-left: 50px;
+  }
+
+  .label-select-type {
+    display: none;
+  }
+
+  .tipus-cerca {
+    display: none;
+  }
+
+  .result-list-container {
+    height: calc(100vh - 80px - 80px);
+    padding: 0;
+    ;
+  }
+
+  .result-list {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .result-item {
+    height: 60px;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 10px;
+    margin-top: 5px;
+  }
+
+  .album-container {
+    display: none;
+  }
+
+  .album-btns-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #979696;
+    width: 20%;
+  }
+
+  .track-duration {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+    display: none;
+  }
+
+  .play-pic-name-container {
+    width: 70%;
+  }
+
+  .name-container {
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 12px;
+    width: 50%;
+  }
+
+  .artist {
+    display: none;
+  }
+
+  .error-container {
+    width: 250px;
+    right: calc(50vw - 125px);
+  }
+
+  .add-btn {
+    width: 35%;
+  }
+
+  .close-btn {
+    width: 40%;
+  }
+
+  .menu-btn {
+    background-color: transparent;
+    border: none;
+    display: block;
+  }
 }
 </style>
