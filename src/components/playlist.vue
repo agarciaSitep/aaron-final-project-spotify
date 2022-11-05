@@ -14,7 +14,7 @@
     <div v-else>
       <div class="header">
         <div class="playlist-picture">
-          <img class="picture" src='../icons/Carátula de CD Llamativa Azul y Naranja (1).png'/>
+          <img class="picture" src='../icons/playlist_image.png'/>
         </div>
         <div class="playlist-info-container">
           <h4>Playlist</h4>
