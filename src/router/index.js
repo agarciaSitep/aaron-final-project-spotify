@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import App from '../App.vue';
-import Playlist from '../components/Playlist.vue';
+import Playlist from '../components/playlist.vue';
 import Auth from '../components/Auth/Auth.vue';
 
 const router = createRouter({

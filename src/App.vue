@@ -21,7 +21,7 @@ import LeftNav from './components/LeftNav.vue'
 import RightNav from './components/RightNav.vue'
 import MainPage from './components/MainPage.vue'
 import Auth from './components/Auth/Auth.vue'
-import Playlist from './components/Playlist.vue'
+import Playlist from './components/playlist.vue'
 
 
 const userStore = useUserStore();
