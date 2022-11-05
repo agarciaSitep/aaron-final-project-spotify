@@ -1,5 +1,5 @@
 <template>
-  <div id="left-nav">
+  <div id="left-nav" class="selected">
     <div class="cont">
       <div class="logo-cont">
         <a class="logo" draggable="false" href="/">
@@ -42,6 +42,10 @@ import { useIsPlaylistStore } from '../stores/isPlaylist';
 const isPlaylistStore = useIsPlaylistStore();
 
 async function onChangePage(isPlaylist) {
+  if (window.innerWidth < 464) {
+    //document.getElementById('left-nav').style.display = 'none';
+     document.getElementById('left-nav').style.display = 'none';
+  }
   await isPlaylistStore.onChangeMainPage(isPlaylist);
 }
 
@@ -56,6 +60,7 @@ async function onChangePage(isPlaylist) {
   bottom: 100px;
   height: calc(100vh - 100px);
   background-color: #000;
+  z-index: 3;
 }
 
 a {
@@ -146,5 +151,79 @@ a {
   height: 100%;
   overscroll-behavior-y: contain;
   padding: 8px 0;
+}
+
+@media screen and (max-width: 464px) {
+  #left-nav {
+    width: 100vw;
+    bottom: 80px;
+    height: calc(100vh - 80px);
+  }
+
+  .cont {
+    margin: 0;
+  }
+
+  .logo-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .separator {
+    margin: 0;
+  }
+
+  .crear-lista-text-container {
+    justify-content: center;
+    align-items: center;
+    width: auto;
+  }
+
+  .selected {
+  animation: slide-in 0.5s forwards;
+  -webkit-animation: slide-in 0.5s forwards;
+}
+
+.dismiss {
+  animation: slide-out 0.5s forwards;
+  -webkit-animation: slide-out 0.5s forwards;
+}
+
+@keyframes slide-in {
+  0% {
+    -webkit-transform: translateX(-100%);
+  }
+  100% {
+    -webkit-transform: translateX(0%);
+  }
+}
+
+@-webkit-keyframes slide-in {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@-webkit-keyframes slide-out {
+  0% {
+    -webkit-transform: translateX(0%);
+  }
+  100% {
+    -webkit-transform: translateX(100%);
+  }
+}
 }
 </style>

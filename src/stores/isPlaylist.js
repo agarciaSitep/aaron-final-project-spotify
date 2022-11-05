@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 export const useIsPlaylistStore = defineStore("isPlaylist", {
   state: () => ({
-    isPlaylist: true,
+    isPlaylist: false,
   }),
 
   actions: {

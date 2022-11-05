@@ -21,7 +21,7 @@ async function getSongUrl() {
     ' frameBorder="0"' +
     ' allowfullscreen=""' +
     ' allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"' +
-    ' loading="lazy"'+
+    ' loading="lazy"' +
     ' auto_play="true">' +
     '</iframe>'
   return iframe.replace(/\/+$/, '');
@@ -48,6 +48,14 @@ async function getSongUrl() {
   margin: 0;
   background-color: transparent;
   display: contents;
+}
+
+@media screen and (max-width: 464px) {
+
+  #bottom-nav {
+    height: 80px;
+  }
+
 }
 </style>
   
